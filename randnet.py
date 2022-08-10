@@ -90,10 +90,10 @@ def main():
 
     # visualization
     # ! visualize 3d seuqneces
-    # seq3d(seqs, T, W, K, fpath + '/3d_ori.gif')
-    # seq3d(seq_tem, T, W, K, fpath + '/3d_tem.gif')
-    # seq3d(seq_spc, T, W, K, fpath + '/3d_spc.gif')
-    # seq3d(seq_rnd, T, W, K, fpath + '/3d_rnd.gif')
+    seq3d(seqs, T, W, K, fpath + '/3d_ori.gif')
+    seq3d(seq_tem, T, W, K, fpath + '/3d_tem.gif')
+    seq3d(seq_spc, T, W, K, fpath + '/3d_spc.gif')
+    seq3d(seq_rnd, T, W, K, fpath + '/3d_rnd.gif')
 
     # ! visualize 2d observations
     As = [np.array([1, 1, 1]), np.array([0, 0, 1]), np.array([0, 1, 0]), np.array([1, 0, 0])]       # observation planes (directions)
