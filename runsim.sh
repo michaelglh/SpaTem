@@ -4,7 +4,7 @@ K=20
 L=10
 T=100
 
-epoch=8
+epoch=3
 COUNTER=1
 THREAD=8
 

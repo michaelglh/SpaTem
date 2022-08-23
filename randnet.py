@@ -62,7 +62,6 @@ def main():
             xs, ys, zs = np.ravel(xs), np.ravel(ys), np.ravel(zs)
             idx = np.random.uniform(0., 1., (L+1)*(L+1)*(L+1)) < sp             # random selection with density sp
             seqs[k].append(np.stack([xs[idx], ys[idx], zs[idx]]))               # store cluster at time t of sequence k
-
     # ? spatial randomization
     seq_tem = copy.deepcopy(seqs)
     shuff_ps = copy.deepcopy(ps)                                            
@@ -80,9 +79,12 @@ def main():
     # ? bumps
     seq_bmp = copy.deepcopy(seqs)
     for k in range(K):
+        xs, ys, zs = np.meshgrid(np.linspace(cs[0,k,0]-hL, cs[0,k,0]+hL, L+1, dtype=int), np.linspace(cs[0,k,1]-hL, cs[0,k,1]+hL, L+1, dtype=int), np.linspace(cs[0,k,2]-hL, cs[0,k,2]+hL, L+1, dtype=int))                             # candidates within radius L
+        xs, ys, zs = np.ravel(xs), np.ravel(ys), np.ravel(zs)
         for t in range(T):
-            np.sum(bound3d(seq_tem[k][t], 0, W))
-            seq_bmp[k][t] = seq_bmp[k][0]
+            sp = np.sum(bound3d(seq_tem[k][t], 0, W))/len(xs)
+            idx = np.random.uniform(0., 1., (L+1)*(L+1)*(L+1)) < sp             # random selection with density sp
+            seq_bmp[k][t] = np.stack([xs[idx], ys[idx], zs[idx]])
     # ? totally random
     seq_rnd = copy.deepcopy(seq_tem)                                            # shuffle space
     for k in range(K):
@@ -93,6 +95,7 @@ def main():
     seq3d(seqs, T, W, K, fpath + '/3d_ori.gif')
     seq3d(seq_tem, T, W, K, fpath + '/3d_tem.gif')
     seq3d(seq_spc, T, W, K, fpath + '/3d_spc.gif')
+    seq3d(seq_bmp, T, W, K, fpath + '/3d_bmp.gif')
     seq3d(seq_rnd, T, W, K, fpath + '/3d_rnd.gif')
 
     # ! visualize 2d observations
