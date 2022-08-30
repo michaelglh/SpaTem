@@ -12,26 +12,20 @@ import copy
 import pandas as pd
 
 # utils
-from lib.utils import seq3d, seq2d, bound3d
+from lib.utils import seq3d, seq2d, bound3d, poshit
 
 def main():
     # system input
     parser = argparse.ArgumentParser(description='Spatio-temporal sequences and observations.')
     # sequence setting
-    parser.add_argument('--W', type=int, help='network size e.g. 100*100', default=100)
-    parser.add_argument('--K', type=int, help='number of sequences', default=20)
+    parser.add_argument('--W', type=int, help='network size e.g. 50*50*50', default=50)
+    parser.add_argument('--K', type=int, help='number of sequences', default=10)
     parser.add_argument('--L', type=int, help='radius of cluser', default=10)
-    parser.add_argument('--T', type=int, help='time length of sequence', default=100)
+    parser.add_argument('--T', type=int, help='time length of sequence', default=10)
     # simulation setting
     parser.add_argument('--trial', type=int, help='simulation trial', default=1)
     parser.add_argument('--vis', action='store_true', default=False)
     args = parser.parse_args()
-
-    # setting path and create forlders
-    dpath = './data/W%d_K%d_L%d/%d'%(args.W, args.K, args.L, args.trial)
-    fpath = './fig/W%d_K%d_L%d/%d'%(args.W, args.K, args.L, args.trial)
-    for path in [dpath, fpath]:
-        os.makedirs(path, exist_ok=True)
 
     # load settings
     D = 3               # dimension
@@ -41,6 +35,12 @@ def main():
     hL = int(L/2)
     T = args.T
     ps = np.stack(np.meshgrid(range(W), range(W), range(W))).reshape(D, -1).T   # neurons on 3d grid
+
+    # setting path and create forlders
+    dpath = './data/W%d_K%d_L%d/%d'%(W, K, L, args.trial)
+    fpath = './fig/W%d_K%d_L%d/%d'%(W, K, L, args.trial)
+    for path in [dpath, fpath]:
+        os.makedirs(path, exist_ok=True)
 
     # random seed
     seed_value = random.randrange(2**30)
@@ -98,24 +98,25 @@ def main():
     seq3d(seq_bmp, T, W, K, fpath + '/3d_bmp.gif')
     seq3d(seq_rnd, T, W, K, fpath + '/3d_rnd.gif')
 
-    # ! visualize 2d observations
-    As = [np.array([1, 1, 1]), np.array([0, 0, 1]), np.array([0, 1, 0]), np.array([1, 0, 0])]       # observation planes (directions)
-    Q = np.array([W/2, W/2, W/2])                                                                   # origins of observation planes
-    names = ['xyz', 'xy', 'xz', 'yz']
-    exys = []
-    for A, name in zip(As, names):
-        A = A/np.linalg.norm(A)
-        ex, ey = seq2d(seqs, T, W, K, A, Q, fpath + '/ori_%s'%name)
-        exys.append([ex, ey])
+    # # ! visualize 2d observations
+    # As = [np.array([1, 1, 1]), np.array([0, 0, 1]), np.array([0, 1, 0]), np.array([1, 0, 0])]       # observation planes (directions)
+    # Q = np.array([W/2, W/2, W/2])                                                                   # origins of observation planes
+    # names = ['xyz', 'xy', 'xz', 'yz']
+    # exys = []
+    # for A, name in zip(As, names):
+    #     A = A/np.linalg.norm(A)
+    #     ex, ey = seq2d(seqs, T, W, K, A, Q, fpath + '/ori_%s'%name)
+    #     exys.append([ex, ey])
         
     # ! save data
+    case = 5
     seqdata = {
-        'seeds': [seed_value],
-        'seq': [[seqs, seq_tem, seq_spc, seq_rnd]],
-        '2ds': [[names, As, exys]],
+        'seed': [seed_value]*case,
+        'seqs': [seqs, seq_tem, seq_spc, seq_bmp, seq_rnd],
+        'label': list(range(case))
     }
     df = pd.DataFrame(seqdata)
-    df.to_csv(dpath + '/seq.csv')
+    df.to_pickle(dpath + '/seq.pkl')
 
 
 if __name__ == '__main__':

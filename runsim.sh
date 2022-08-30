@@ -1,10 +1,10 @@
 #!/bin/bash
-W=100
-K=20
-L=10
-T=100
+W=20
+K=5
+L=5
+T=50
 
-epoch=3
+epoch=1000
 COUNTER=1
 THREAD=8
 

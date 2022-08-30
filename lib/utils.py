@@ -197,3 +197,12 @@ def seq2d(seqs, T, W, K, A, Q, fname, h=1):
     plt.close()
 
     return ex, ey
+
+def poshit(seqs, T, W):
+    hitmap = np.zeros((T, W*W*W), dtype=bool)
+    for seq in seqs:
+        for t, ps in enumerate(seq):
+            idx = bound3d([ps[0], ps[1], ps[2]], 0, W)
+            hitmap[t, ps[0][idx]*W*W + ps[1][idx]*W + ps[2][idx]] = True
+
+    return hitmap
